@@ -1,0 +1,43 @@
+# 乡村应急广播与预警联动 —— 后端配置示例
+# 复制为 config.yaml 后按需修改；敏感项可用环境变量覆盖（见 config.go）
+
+server:
+  addr: ":8080"          # 监听地址
+  mode: "debug"          # gin 模式：debug / release
+
+database:
+  # PostgreSQL DSN；也可用环境变量 PG_DSN 覆盖
+  dsn: "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=deluge sslmode=disable"
+  max_open_conns: 20
+  max_idle_conns: 5
+
+jwt:
+  secret: "change-me-in-prod"   # 生产用 JWT_SECRET 覆盖
+  expire_hours: 168             # 7 天
+
+wechat:
+  appid: ""              # 小程序 AppID，可用 WX_APPID 覆盖
+  secret: ""             # 小程序 Secret，可用 WX_SECRET 覆盖
+
+# 读数热库保留天数，超期分区将被归档并清理
+readings_retention_days: 30
+
+# 异步任务 worker 数量
+async_workers: 4
+
+# 设备上报 HMAC 签名密钥（为空则不校验签名，便于本地联调）
+device_secret: ""
+
+tts:
+  provider: "mock"       # mock / tencent；mock 不真正合成，便于本地联调
+  secret_id: ""
+  secret_key: ""
+  region: "ap-guangzhou"
+
+storage:
+  provider: "mock"       # mock / cos；mock 返回本地占位 URL
+  secret_id: ""
+  secret_key: ""
+  region: "ap-guangzhou"
+  bucket: ""
+  base_url: ""           # COS 访问域名，如 https://bucket.cos.region.myqcloud.com

@@ -1,0 +1,12 @@
+<view class="container">
+  <view class="card">
+    <view style="font-weight:bold;margin-bottom:16rpx;">隐患描述</view>
+    <textarea style="width:100%;height:200rpx;" placeholder="请描述发现的隐患情况..."
+              bindinput="onContent" value="{{content}}"></textarea>
+  </view>
+  <view class="card" bindtap="locate">
+    <view wx:if="{{located}}">已定位：{{lng}}, {{lat}}</view>
+    <view wx:else style="color:#1f6feb;">点击获取当前定位 📍</view>
+  </view>
+  <button class="btn-primary" bindtap="submit">提交上报</button>
+</view>

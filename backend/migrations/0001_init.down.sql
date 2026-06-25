@@ -1,0 +1,14 @@
+-- 0001_init down
+DROP TABLE IF EXISTS report_attachments;
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS attachments;
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS alert_logs;
+DROP TABLE IF EXISTS alerts;
+DROP TABLE IF EXISTS rules;
+DROP TABLE IF EXISTS templates;
+DROP TABLE IF EXISTS daily_water_stats;
+DROP TABLE IF EXISTS readings;
+DROP TABLE IF EXISTS devices;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS grids;

@@ -1,0 +1,7 @@
+# Go
+/bin/
+*.exe
+config.yaml
+
+# 依赖缓存
+vendor/

@@ -1,0 +1,20 @@
+# Go
+backend/bin/
+*.exe
+backend/config.yaml
+
+# Python
+__pycache__/
+*.pyc
+
+# 临时输出
+sim_out.txt
+sim_err.txt
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
+
+# 微信开发者工具
+miniprogram/node_modules/

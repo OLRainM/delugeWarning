@@ -1,0 +1,14 @@
+{
+  "description": "乡村应急广播与预警信息联动小程序",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "latest",
+  "appid": "touristappid",
+  "projectname": "deluge-warning-miniprogram"
+}
