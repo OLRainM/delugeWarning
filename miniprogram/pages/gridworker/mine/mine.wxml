@@ -1,8 +1,0 @@
-<view class="container">
-  <view class="card">
-    <view style="font-size:32rpx;font-weight:bold;">{{user.name || '网格员'}}</view>
-    <view class="muted" style="margin-top:8rpx;">角色：网格员（兼后台管理与复核）</view>
-    <view class="muted">所属网格：{{user.grid_id}}</view>
-  </view>
-  <button class="btn-line" bindtap="logout">退出登录</button>
-</view>

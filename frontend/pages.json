@@ -1,0 +1,54 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login",
+			"style": { "navigationBarTitleText": "登录" }
+		},
+		{
+			"path": "pages/villager/home/home",
+			"style": { "navigationBarTitleText": "预警首页" }
+		},
+		{
+			"path": "pages/villager/broadcast/broadcast",
+			"style": { "navigationBarTitleText": "应急广播" }
+		},
+		{
+			"path": "pages/villager/guide/guide",
+			"style": { "navigationBarTitleText": "避险指引" }
+		},
+		{
+			"path": "pages/villager/report/report",
+			"style": { "navigationBarTitleText": "隐患上报" }
+		},
+		{
+			"path": "pages/villager/mine/mine",
+			"style": { "navigationBarTitleText": "我的" }
+		},
+		{
+			"path": "pages/gridworker/tasks/tasks",
+			"style": { "navigationBarTitleText": "我的任务" }
+		},
+		{
+			"path": "pages/gridworker/task-detail/task-detail",
+			"style": { "navigationBarTitleText": "任务处置" }
+		},
+		{
+			"path": "pages/gridworker/alerts/alerts",
+			"style": { "navigationBarTitleText": "预警复核" }
+		},
+		{
+			"path": "pages/gridworker/alert-detail/alert-detail",
+			"style": { "navigationBarTitleText": "预警详情" }
+		},
+		{
+			"path": "pages/gridworker/mine/mine",
+			"style": { "navigationBarTitleText": "我的" }
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "乡村应急广播预警",
+		"navigationBarBackgroundColor": "#1f6feb",
+		"backgroundColor": "#f4f5f7"
+	}
+}

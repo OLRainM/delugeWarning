@@ -15,7 +15,7 @@ delugeWarning/
 │   ├── internal/          分层代码（api/service/repository/...）
 │   ├── migrations/        SQL 迁移（内嵌自动执行）
 │   └── config.example.yaml
-├── miniprogram/           微信小程序（村民端 + 网格员端）
+├── frontend/              uni-app 工程（HBuilderX 打开运行，村民端 + 网格员端）
 └── scripts/               传感器数据模拟脚本（100 / 1000 版）
 ```
 
@@ -24,7 +24,7 @@ delugeWarning/
 - 后端：Go + Gin + dbr(SQL 构建器) + PostgreSQL + robfig/cron + yaml.v3
 - 存储/TTS：腾讯云 COS / 腾讯云 TTS（默认 mock 实现，便于本地联调）
 - 推送：微信订阅消息（默认 mock）
-- 前端：微信原生小程序，双角色
+- 前端：uni-app（可编译为微信小程序 / H5 / App），双角色
 
 ## 快速开始
 
@@ -54,10 +54,11 @@ python sim_water_level.py --scenario surge --device dev-water-0001 --interval 1
 
 后端会：落库读数 → 规则匹配 → 异步生成预警(含 TTS) → 直发派发任务 / 转待复核。
 
-### 4. 运行小程序
+### 4. 运行前端（uni-app）
 
-用微信开发者工具打开 `miniprogram/` 目录，`app.js` 中 `baseURL` 指向后端地址。
-登录页可选择"村民"或"网格员"身份。
+用 HBuilderX 打开 `frontend/` 目录，修改 `App.vue` 中 `globalData.baseURL` 指向后端地址，
+然后"运行 → 运行到浏览器/微信开发者工具"。登录页可选择"村民"或"网格员"身份。
+详细步骤见 `docs/DEPLOYMENT.md`。
 
 ## 核心闭环
 

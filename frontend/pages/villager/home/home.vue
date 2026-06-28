@@ -1,0 +1,48 @@
+<template>
+	<view class="container">
+		<view class="card" v-if="alerts.length===0 && !loading">
+			<view style="text-align:center;color:#52c41a;font-size:32rpx;">当前本村暂无生效预警</view>
+			<view class="muted" style="text-align:center;margin-top:12rpx;">请保持关注，注意防范</view>
+		</view>
+
+		<view class="card" v-for="item in alerts" :key="item.id" @tap="openBroadcast(item.id)">
+			<view style="display:flex;justify-content:space-between;align-items:center;">
+				<text class="tag" :class="item.levelInfo.cls">{{item.levelInfo.text}}预警</text>
+				<text class="muted">{{item.status}}</text>
+			</view>
+			<view style="font-size:32rpx;font-weight:bold;margin:16rpx 0;">{{item.title}}</view>
+			<view>{{item.content}}</view>
+			<view class="muted" style="margin-top:12rpx;">点击查看广播 ▶</view>
+		</view>
+
+		<view class="nav-grid">
+			<navigator url="/pages/villager/guide/guide" class="nav-item">避险指引</navigator>
+			<navigator url="/pages/villager/report/report" class="nav-item">隐患上报</navigator>
+			<navigator url="/pages/villager/mine/mine" class="nav-item">我的</navigator>
+		</view>
+	</view>
+</template>
+
+<script>
+	import api from '@/utils/request';
+	export default {
+		data() {
+			return { alerts: [], loading: true };
+		},
+		onShow() { this.load(); },
+		methods: {
+			load() {
+				api.get('/api/v1/village/alerts').then((res) => {
+					const items = (res.items || []).map((a) => ({
+						...a, levelInfo: api.levelMap[a.level] || { text: a.level, cls: '' }
+					}));
+					this.alerts = items;
+					this.loading = false;
+				}).catch(() => { this.loading = false; });
+			},
+			openBroadcast(id) {
+				uni.navigateTo({ url: '/pages/villager/broadcast/broadcast?id=' + id });
+			}
+		}
+	};
+</script>

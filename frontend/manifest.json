@@ -1,0 +1,39 @@
+{
+	"name" : "乡村应急广播预警",
+	"appid" : "",
+	"description" : "乡村应急广播与预警信息联动小程序",
+	"versionName" : "1.0.0",
+	"versionCode" : "100",
+	"transformPx" : false,
+	"app-plus" : {
+		"usingComponents" : true,
+		"nvueStyleCompiler" : "uni-app",
+		"compilerVersion" : 3,
+		"splashscreen" : {
+			"alwaysShowBeforeRender" : true,
+			"waiting" : true,
+			"autoclose" : true,
+			"delay" : 0
+		},
+		"modules" : {},
+		"distribute" : {
+			"android" : { "permissions" : [ "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>" ] },
+			"ios" : {},
+			"sdkConfigs" : {}
+		}
+	},
+	"quickapp" : {},
+	"mp-weixin" : {
+		"appid" : "",
+		"setting" : { "urlCheck" : false, "es6" : true, "postcss" : true, "minified" : true },
+		"usingComponents" : true,
+		"permission" : {
+			"scope.userLocation" : { "desc" : "用于隐患上报时定位现场位置" }
+		}
+	},
+	"h5" : {
+		"router" : { "mode" : "hash" },
+		"devServer" : { "port" : 8090 }
+	},
+	"vueVersion" : "2"
+}

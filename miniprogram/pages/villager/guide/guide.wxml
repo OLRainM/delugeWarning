@@ -1,8 +1,0 @@
-<view class="container">
-  <view class="card">
-    <view style="font-weight:bold;font-size:32rpx;margin-bottom:16rpx;">洪水避险指引</view>
-    <view wx:for="{{tips}}" wx:key="*this" style="padding:16rpx 0;border-bottom:1rpx solid #f0f0f0;">
-      {{index+1}}. {{item}}
-    </view>
-  </view>
-</view>
