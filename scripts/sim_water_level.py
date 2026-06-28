@@ -300,7 +300,7 @@ def _delayed_submit(task, dev, nv, jitter):
 def main():
     parser = argparse.ArgumentParser(description="水位/雨量传感器数据模拟脚本")
     parser.add_argument("--api", default="http://127.0.0.1:8080", help="后端基础地址")
-    parser.add_argument("--device", default="dev-water-001", help="单设备模式的设备ID")
+    parser.add_argument("--device", default="dev-water-0001", help="单设备模式的设备ID")
     parser.add_argument("--device-prefix", default="dev-water-", help="多设备模式ID前缀")
     parser.add_argument("--unit", default="m", help="读数单位，水位 m / 雨量 mm")
     parser.add_argument("--scenario", default="surge",
