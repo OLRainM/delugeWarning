@@ -61,13 +61,24 @@ func (h *Handler) broadcast(c *gin.Context) {
 		return
 	}
 	ttsURL := ""
+	ttsReady := false
 	if a.TTSURL != "" {
-		ttsURL, err = h.storage.GetDownloadURL(c, a.TTSURL, 15*time.Minute)
-		if err != nil {
-			log.Printf("[broadcast] 签名 TTS URL 失败: %v", err)
+		signed, signErr := h.storage.GetDownloadURL(c, a.TTSURL, 15*time.Minute)
+		if signErr != nil {
+			log.Printf("[broadcast] 签名 TTS URL 失败: %v", signErr)
+			// COS 未就绪时透传 ObjectKey，让前端知道有内容但暂不可播放
+			ttsURL = a.TTSURL
+		} else {
+			ttsURL = signed
+			ttsReady = true
 		}
 	}
-	c.JSON(http.StatusOK, gin.H{"title": a.Title, "content": a.Content, "tts_url": ttsURL})
+	c.JSON(http.StatusOK, gin.H{
+		"title":     a.Title,
+		"content":   a.Content,
+		"tts_url":   ttsURL,
+		"tts_ready": ttsReady, // 前端据此决定是否展示播放按钮
+	})
 }
 
 type reportReq struct {
