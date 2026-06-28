@@ -10,10 +10,11 @@
 		<view class="card" v-if="tasks.length===0"><view class="muted" style="text-align:center;">暂无任务</view></view>
 		<view class="card" v-for="item in tasks" :key="item.id" @tap="open(item.id)">
 			<view style="display:flex;justify-content:space-between;">
-				<text>任务 #{{item.id}}（预警 #{{item.alert_id}}）</text>
-				<text class="muted">{{item.status}}</text>
+				<text style="font-weight:bold;">任务 #{{item.id}}（预警 #{{item.alert_id}}）</text>
+				<text class="muted">{{item.statusText}}</text>
 			</view>
-			<view class="muted" style="margin-top:8rpx;">{{item.handle_remark || '点击处理'}}</view>
+			<view class="muted" style="margin-top:8rpx;">派发时间：{{item.timeText}}</view>
+			<view style="margin-top:8rpx;color:#1f6feb;">{{item.handle_remark || '点击查看处置'}}</view>
 		</view>
 
 		<view class="nav-grid">
@@ -25,16 +26,27 @@
 
 <script>
 	import api from '@/utils/request';
+	import fmt from '@/utils/format';
+	let timer = null;
 	export default {
 		data() {
 			return { tasks: [], status: '' };
 		},
-		onShow() { this.load(); },
+		onShow() {
+			this.load();
+			timer = setInterval(() => this.load(), 30000);
+		},
+		onHide() { clearInterval(timer); },
+		onUnload() { clearInterval(timer); },
 		methods: {
 			filter(s) { this.status = s; this.load(); },
 			load() {
 				api.get('/api/v1/tasks', { status: this.status }).then((res) => {
-					this.tasks = res.items || [];
+					this.tasks = (res.items || []).map((t) => ({
+						...t,
+						statusText: fmt.statusText(t.status),
+						timeText: fmt.fmtTime(t.created_at)
+					}));
 				});
 			},
 			open(id) { uni.navigateTo({ url: '/pages/gridworker/task-detail/task-detail?id=' + id }); },

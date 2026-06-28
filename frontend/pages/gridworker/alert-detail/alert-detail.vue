@@ -2,8 +2,9 @@
 	<view class="container">
 		<view class="card">
 			<view style="font-weight:bold;font-size:32rpx;">{{alert.title}}</view>
-			<view style="margin:16rpx 0;">{{alert.content}}</view>
-			<view class="muted">状态：{{alert.status}} ｜ 来源：{{alert.source==='sensor'?'系统自动':'人工'}}</view>
+			<view style="margin:16rpx 0;line-height:1.6;">{{alert.content}}</view>
+			<view class="muted">状态：{{statusText}} &nbsp;｜&nbsp; 来源：{{sourceText}}</view>
+			<view class="muted" style="margin-top:4rpx;">发布时间：{{timeText}}</view>
 		</view>
 
 		<view class="card" v-if="alert.status==='pending_review'">
@@ -19,8 +20,8 @@
 		<view class="card">
 			<view style="font-weight:bold;margin-bottom:12rpx;">流转记录</view>
 			<view v-for="item in logs" :key="item.id" style="padding:12rpx 0;border-bottom:1rpx solid #f0f0f0;">
-				<view>{{item.from_status || '—'}} → {{item.to_status}}</view>
-				<view class="muted">{{item.remark}}</view>
+				<view>{{fmtStatus(item.from_status)}} → {{fmtStatus(item.to_status)}}</view>
+				<view class="muted">{{item.remark}} &nbsp;{{fmtTime(item.created_at)}}</view>
 			</view>
 		</view>
 	</view>
@@ -28,9 +29,10 @@
 
 <script>
 	import api from '@/utils/request';
+	import fmt from '@/utils/format';
 	export default {
 		data() {
-			return { id: 0, alert: {}, logs: [] };
+			return { id: 0, alert: {}, logs: [], statusText: '', sourceText: '', timeText: '' };
 		},
 		onLoad(q) { this.id = Number(q.id); this.load(); },
 		methods: {
@@ -38,6 +40,9 @@
 				api.get('/api/v1/alerts/' + this.id).then((res) => {
 					this.alert = res.alert || {};
 					this.logs = res.logs || [];
+					this.statusText = fmt.statusText(this.alert.status);
+					this.sourceText = this.alert.source === 'sensor' ? '系统自动触发' : '人工发布';
+					this.timeText = fmt.fmtTime(this.alert.created_at);
 				});
 			},
 			review(action) {
@@ -51,7 +56,9 @@
 					uni.showToast({ title: '已归档' });
 					this.load();
 				});
-			}
+			},
+			fmtStatus(s) { return s ? fmt.statusText(s) : '—'; },
+			fmtTime(t) { return fmt.fmtTime(t); }
 		}
 	};
 </script>

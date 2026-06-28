@@ -1,5 +1,7 @@
 // utils/request.js —— 统一封装后端请求，自动带 token（uni-app 版）
 
+import fmt from './format';
+
 function baseURL() {
 	return getApp().globalData.baseURL;
 }
@@ -31,13 +33,6 @@ function request(method, path, data) {
 	});
 }
 
-const levelMap = {
-	blue: { text: '蓝色', cls: 'level-blue' },
-	yellow: { text: '黄色', cls: 'level-yellow' },
-	orange: { text: '橙色', cls: 'level-orange' },
-	red: { text: '红色', cls: 'level-red' }
-};
-
 function toQuery(obj) {
 	if (!obj) return '';
 	const parts = Object.keys(obj)
@@ -49,5 +44,5 @@ function toQuery(obj) {
 export default {
 	get: (p, d) => request('GET', p + toQuery(d)),
 	post: (p, d) => request('POST', p, d),
-	levelMap
+	levelMap: fmt.levelMap
 };

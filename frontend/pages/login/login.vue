@@ -17,8 +17,18 @@
 			</view>
 		</view>
 
-		<button class="btn-primary" style="margin-top:24rpx;" @tap="login">微信一键登录</button>
-		<view class="muted" style="margin-top:16rpx;text-align:center;">网格员兼任后台复核与设备管理</view>
+		<button class="btn-primary" style="margin-top:24rpx;" @tap="login">一键登录（测试模式）</button>
+
+		<!-- 测试账户快捷入口 -->
+		<view class="card" style="margin-top:24rpx;">
+			<view style="font-size:24rpx;color:#8a9099;margin-bottom:16rpx;">测试账户快速登录</view>
+			<view style="display:flex;gap:20rpx;">
+				<view class="btn-line" style="flex:1;text-align:center;padding:20rpx;font-size:26rpx;"
+					@tap="quickLogin('villager')">👤 测试村民</view>
+				<view class="btn-line" style="flex:1;text-align:center;padding:20rpx;font-size:26rpx;"
+					@tap="quickLogin('gridworker')">🔧 测试网格员</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -30,18 +40,10 @@
 		},
 		methods: {
 			chooseRole(r) { this.role = r; },
-			login() {
-				const role = this.role;
-				// #ifdef MP-WEIXIN
-				uni.login({
-					success: (res) => this.doLogin(res.code, role)
-				});
-				// #endif
-				// #ifndef MP-WEIXIN
-				// 非微信端用占位 code 便于 H5/App 调试
-				this.doLogin('debug-' + role, role);
-				// #endif
-			},
+			// 普通登录：用角色名作为 code（本地 mock 模式）
+			login() { this.doLogin('user-' + this.role, this.role); },
+			// 快捷测试账户：固定 code，后端会生成固定 openid
+			quickLogin(role) { this.doLogin('test-' + role, role); },
 			doLogin(code, role) {
 				api.post('/api/v1/auth/wx-login', { code, role }).then((data) => {
 					const app = getApp();
