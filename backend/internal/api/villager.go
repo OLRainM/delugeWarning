@@ -20,6 +20,22 @@ func (h *Handler) profile(c *gin.Context) {
 	c.JSON(http.StatusOK, u)
 }
 
+// updateName 更新当前用户姓名（网格员"我的"页填写）。
+func (h *Handler) updateName(c *gin.Context) {
+	var req struct {
+		Name string `json:"name"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil || req.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "name 不能为空"})
+		return
+	}
+	if err := h.repo.UpdateUserName(middleware.UserIDOf(c), req.Name); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"ok": true})
+}
+
 // villageAlerts 村民查看本网格生效中的预警。
 func (h *Handler) villageAlerts(c *gin.Context) {
 	u, err := h.repo.GetUser(middleware.UserIDOf(c))

@@ -43,6 +43,12 @@ func (r *Repo) GetUser(id int64) (*model.User, error) {
 	return &u, nil
 }
 
+// UpdateUserName 更新用户姓名。
+func (r *Repo) UpdateUserName(id int64, name string) error {
+	_, err := r.sess().Update("users").Set("name", name).Where("id = ?", id).Exec()
+	return err
+}
+
 // GridworkerByGrid 返回某网格的网格员（用于任务派发）。
 func (r *Repo) GridworkerByGrid(gridID int64) (*model.User, error) {
 	var u model.User

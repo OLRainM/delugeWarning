@@ -1,0 +1,7 @@
+﻿START 06/28/2026 14:53:30
+Backed up to C:\Program Files\PostgreSQL\18\data\pg_hba.conf.bak_reset
+pg_hba patched to trust
+ALTER ROLE
+Password reset attempted (exit=0)
+Restored pg_hba and restarted
+DONE OK

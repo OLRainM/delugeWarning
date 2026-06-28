@@ -7,7 +7,7 @@ server:
 
 database:
   # PostgreSQL DSN；也可用环境变量 PG_DSN 覆盖
-  dsn: "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=deluge sslmode=disable"
+  dsn: "host=127.0.0.1 port=5432 user=postgres password=OVLRtang7278. dbname=deluge sslmode=disable"
   max_open_conns: 20
   max_idle_conns: 5
 

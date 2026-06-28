@@ -23,6 +23,7 @@ func (h *Handler) Register(r *gin.Engine) {
 		authed.Use(middleware.Auth(h.jwt))
 		{
 			authed.GET("/profile", h.profile)
+			authed.PUT("/profile/name", h.updateName)
 
 			// 设备/趋势（网格员查看）
 			gw := authed.Group("")
