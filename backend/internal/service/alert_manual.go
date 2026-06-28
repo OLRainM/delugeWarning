@@ -13,14 +13,15 @@ func (s *AlertService) CreateManual(operatorID, gridID int64, level, content str
 	if content == "" {
 		return nil, fmt.Errorf("预警内容不能为空")
 	}
-	ttsURL, err := s.tts.Synthesize(context.Background(), content)
+	ttsKey, err := s.tts.Synthesize(context.Background(), content)
 	if err != nil {
 		log.Printf("[alert] 人工预警 TTS 失败: %v", err)
 	}
 	a := &model.Alert{
 		Source: model.SourceManual, Level: level, DisasterType: "flood",
 		GridID: gridID, Title: levelName(level) + "预警", Content: content,
-		TTSURL: ttsURL, Status: model.AlertTriggered, TriggeredBy: operatorID,
+		TTSURL: ttsKey, // 存 ObjectKey，下发时由 broadcast 接口签名
+		Status: model.AlertTriggered, TriggeredBy: operatorID,
 	}
 	if _, err := s.repo.InsertAlert(a); err != nil {
 		return nil, err

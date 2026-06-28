@@ -48,7 +48,7 @@ func (s *AlertService) generateAlert(r model.Rule, rd *model.Reading, dev *model
 	content := s.renderContent(r, rd, dev)
 	title := fmt.Sprintf("%s预警", levelName(r.Level))
 
-	ttsURL, err := s.tts.Synthesize(context.Background(), content)
+	ttsKey, err := s.tts.Synthesize(context.Background(), content)
 	if err != nil {
 		log.Printf("[alert] TTS 合成失败: %v", err)
 	}
@@ -60,7 +60,8 @@ func (s *AlertService) generateAlert(r model.Rule, rd *model.Reading, dev *model
 	a := &model.Alert{
 		Source: model.SourceSensor, Level: r.Level, DisasterType: "flood",
 		GridID: dev.GridID, DeviceID: dev.ID, Title: title, Content: content,
-		TTSURL: ttsURL, Status: status,
+		TTSURL: ttsKey, // 存 ObjectKey，下发时由 broadcast 接口签名
+		Status: status,
 	}
 	if _, err := s.repo.InsertAlert(a); err != nil {
 		log.Printf("[alert] 创建预警失败: %v", err)

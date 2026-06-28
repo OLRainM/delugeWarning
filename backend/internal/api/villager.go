@@ -1,7 +1,9 @@
 package api
 
 import (
+	"log"
 	"net/http"
+	"time"
 
 	"delugewarning/internal/middleware"
 	"delugewarning/internal/model"
@@ -51,14 +53,21 @@ func (h *Handler) villageAlerts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"items": list})
 }
 
-// broadcast 获取预警广播文本与 TTS 音频地址。
+// broadcast 获取预警广播文本与 TTS 临时播放地址（对私有桶 ObjectKey 签名，有效 15 分钟）。
 func (h *Handler) broadcast(c *gin.Context) {
 	a, err := h.repo.GetAlert(parseID(c.Param("id")))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "预警不存在"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"title": a.Title, "content": a.Content, "tts_url": a.TTSURL})
+	ttsURL := ""
+	if a.TTSURL != "" {
+		ttsURL, err = h.storage.GetDownloadURL(c, a.TTSURL, 15*time.Minute)
+		if err != nil {
+			log.Printf("[broadcast] 签名 TTS URL 失败: %v", err)
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"title": a.Title, "content": a.Content, "tts_url": ttsURL})
 }
 
 type reportReq struct {

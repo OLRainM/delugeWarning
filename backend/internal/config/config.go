@@ -116,4 +116,10 @@ func applyEnvOverrides(cfg *Config) {
 			cfg.ReadingsRetentionDays = n
 		}
 	}
+	if v := os.Getenv("COS_SECRET_ID"); v != "" {
+		cfg.Storage.SecretID = v
+	}
+	if v := os.Getenv("COS_SECRET_KEY"); v != "" {
+		cfg.Storage.SecretKey = v
+	}
 }

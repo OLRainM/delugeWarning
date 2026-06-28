@@ -11,10 +11,14 @@ type TTSEngine interface {
 	Synthesize(ctx context.Context, text string) (audioURL string, err error)
 }
 
-// Storage 对象存储抽象（默认腾讯云 COS，可换 S3/OSS/本地）。
+// Storage 对象存储抽象（腾讯云 COS，私有桶）。
 type Storage interface {
-	// PresignPut 返回前端直传用的预签名地址，以及最终访问 URL。
-	PresignPut(ctx context.Context, key string, ttl time.Duration) (uploadURL, accessURL string, err error)
+	// Upload 上传文件，返回 ObjectKey（相对路径，不含域名）。服务端 TTS 合成后调用。
+	Upload(ctx context.Context, key string, data []byte, contentType string) (objectKey string, err error)
+	// PresignPut 返回前端直传用的预签名 PUT 地址及 ObjectKey。
+	PresignPut(ctx context.Context, key string, ttl time.Duration) (uploadURL, objectKey string, err error)
+	// GetDownloadURL 对私有桶的 ObjectKey 签发临时可访问的 GET 链接。
+	GetDownloadURL(ctx context.Context, objectKey string, ttl time.Duration) (string, error)
 }
 
 // TemplateMsg 微信订阅消息内容。
@@ -40,8 +44,16 @@ func (MockTTS) Synthesize(_ context.Context, text string) (string, error) {
 
 type MockStorage struct{}
 
+func (MockStorage) Upload(_ context.Context, key string, _ []byte, _ string) (string, error) {
+	return key, nil
+}
+
 func (MockStorage) PresignPut(_ context.Context, key string, _ time.Duration) (string, string, error) {
-	return "https://mock.local/upload/" + key, "https://mock.local/file/" + key, nil
+	return "https://mock.local/upload/" + key, key, nil
+}
+
+func (MockStorage) GetDownloadURL(_ context.Context, objectKey string, _ time.Duration) (string, error) {
+	return "https://mock.local/file/" + objectKey, nil
 }
 
 type MockPusher struct{}

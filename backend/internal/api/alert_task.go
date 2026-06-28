@@ -131,12 +131,13 @@ func (h *Handler) presignUpload(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少 key"})
 		return
 	}
-	uploadURL, accessURL, err := h.storage.PresignPut(c, req.Key, 10*time.Minute)
+	uploadURL, objectKey, err := h.storage.PresignPut(c, req.Key, 10*time.Minute)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"upload_url": uploadURL, "access_url": accessURL})
+	// 返回 upload_url 供前端直传，object_key 供前端提交任务时一并上报（数据库只存 key）
+	c.JSON(http.StatusOK, gin.H{"upload_url": uploadURL, "object_key": objectKey})
 }
 
 func parseID(s string) int64 {

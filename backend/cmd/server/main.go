@@ -97,6 +97,15 @@ func buildTTS(cfg *config.Config) provider.TTSEngine {
 }
 
 func buildStorage(cfg *config.Config) provider.Storage {
+	if cfg.Storage.Provider == "cos" {
+		s, err := provider.NewCOSStorage(cfg.Storage.SecretID, cfg.Storage.SecretKey, cfg.Storage.BaseURL)
+		if err != nil {
+			log.Fatalf("初始化 COS 存储失败: %v", err)
+		}
+		log.Printf("[storage] 使用腾讯云 COS，桶=%s，域名=%s", cfg.Storage.Bucket, cfg.Storage.BaseURL)
+		return s
+	}
+	log.Println("[storage] 使用 mock 存储（本地联调）")
 	return provider.MockStorage{}
 }
 
