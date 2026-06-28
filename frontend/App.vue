@@ -1,12 +1,12 @@
 <script>
 	export default {
 		onLaunch: function() {
-			// 启动时恢复登录态
+			// 启动时恢复登录态（App 自身用 this，不能用 getApp()）
 			const token = uni.getStorageSync('token');
 			const user = uni.getStorageSync('user');
 			if (token) {
-				getApp().globalData.token = token;
-				getApp().globalData.user = user;
+				this.globalData.token = token;
+				this.globalData.user = user;
 			}
 		},
 		globalData: {
