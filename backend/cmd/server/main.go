@@ -55,9 +55,9 @@ func main() {
 	queue := async.New(cfg.AsyncWorkers, 2048)
 	defer queue.Close()
 
-	// 外部能力（mock 便于本地联调，可切腾讯云）
-	tts := buildTTS(cfg)
+	// 外部能力（storage 先初始化，edge-tts 需要它上传音频）
 	storage := buildStorage(cfg)
+	tts := buildTTS(cfg, storage)
 	pusher := buildPusher(cfg)
 
 	// 服务装配
@@ -91,8 +91,12 @@ func main() {
 	log.Println("[server] 正在关闭...")
 }
 
-func buildTTS(cfg *config.Config) provider.TTSEngine {
-	// TODO: provider == "tencent" 时返回腾讯云实现
+func buildTTS(cfg *config.Config, storage provider.Storage) provider.TTSEngine {
+	if cfg.TTS.Provider == "edge" {
+		log.Printf("[tts] 使用 edge-tts，voice=%s", cfg.TTS.Voice)
+		return provider.NewEdgeTTS(storage, cfg.TTS.Voice, cfg.TTS.PythonBin)
+	}
+	log.Println("[tts] 使用 mock TTS（本地联调）")
 	return provider.MockTTS{}
 }
 

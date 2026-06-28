@@ -43,6 +43,8 @@ type WeChatConfig struct {
 
 type TTSConfig struct {
 	Provider  string `yaml:"provider"`
+	Voice     string `yaml:"voice"`
+	PythonBin string `yaml:"python_bin"`
 	SecretID  string `yaml:"secret_id"`
 	SecretKey string `yaml:"secret_key"`
 	Region    string `yaml:"region"`
