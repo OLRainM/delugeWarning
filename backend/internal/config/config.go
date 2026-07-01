@@ -42,12 +42,14 @@ type WeChatConfig struct {
 }
 
 type TTSConfig struct {
-	Provider  string `yaml:"provider"`
-	Voice     string `yaml:"voice"`
-	PythonBin string `yaml:"python_bin"`
-	SecretID  string `yaml:"secret_id"`
-	SecretKey string `yaml:"secret_key"`
-	Region    string `yaml:"region"`
+	Provider  string  `yaml:"provider"` // edge / http / mock
+	Voice     string  `yaml:"voice"`
+	PythonBin string  `yaml:"python_bin"` // provider=edge 时使用
+	Endpoint  string  `yaml:"endpoint"`   // provider=http 时使用，自建 TTS 服务地址
+	Speed     float64 `yaml:"speed"`      // provider=http 时使用，语速
+	SecretID  string  `yaml:"secret_id"`
+	SecretKey string  `yaml:"secret_key"`
+	Region    string  `yaml:"region"`
 }
 
 type StorageConfig struct {

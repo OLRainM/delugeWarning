@@ -29,7 +29,11 @@ async_workers: 4
 device_secret: ""
 
 tts:
-  provider: "mock"       # mock / tencent；mock 不真正合成，便于本地联调
+  provider: "mock"        # http(自建TTS服务) / edge(edge-tts CLI) / mock
+  endpoint: ""            # provider=http 时填自建服务地址，如 http://x.x.x.x:3000/v1/audio/speech
+  voice: "zh-CN-YunxiNeural"
+  speed: 0.9
+  python_bin: "py"        # provider=edge 时使用
   secret_id: ""
   secret_key: ""
   region: "ap-guangzhou"
