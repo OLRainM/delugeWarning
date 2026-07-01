@@ -110,6 +110,15 @@ func (r *Repo) UpdateAlertStatus(id int64, from, to string, fields map[string]in
 	return res.RowsAffected()
 }
 
+// UpdateAlertTTSURL 回写 TTS ObjectKey（复核通过后异步合成时使用）。
+func (r *Repo) UpdateAlertTTSURL(id int64, ttsURL string) (int64, error) {
+	res, err := r.sess().Update("alerts").Set("tts_url", ttsURL).Where("id = ?", id).Exec()
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 func (r *Repo) InsertAlertLog(l *model.AlertLog) error {
 	l.CreatedAt = time.Now()
 	_, err := r.sess().InsertInto("alert_logs").

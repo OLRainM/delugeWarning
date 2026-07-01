@@ -17,16 +17,17 @@ import (
 
 // AlertService 负责预警的生成、派发、复核、归档（工作流核心）。
 type AlertService struct {
-	repo   *repository.Repo
-	engine *rule.Engine
-	queue  *async.Queue
-	tts    provider.TTSEngine
-	push   provider.Pusher
+	repo    *repository.Repo
+	engine  *rule.Engine
+	queue   *async.Queue
+	tts     provider.TTSEngine
+	push    provider.Pusher
+	storage provider.Storage // 用于复核通过后补充 TTS 并回写 ObjectKey
 }
 
 func NewAlertService(repo *repository.Repo, engine *rule.Engine, queue *async.Queue,
-	tts provider.TTSEngine, push provider.Pusher) *AlertService {
-	return &AlertService{repo: repo, engine: engine, queue: queue, tts: tts, push: push}
+	tts provider.TTSEngine, push provider.Pusher, storage provider.Storage) *AlertService {
+	return &AlertService{repo: repo, engine: engine, queue: queue, tts: tts, push: push, storage: storage}
 }
 
 // HandleReading 同步路径：规则匹配 + 防抖，命中则把慢操作入队。必须快。
@@ -121,6 +122,7 @@ func (s *AlertService) Review(alertID, operatorID int64, action, newContent stri
 		fields := map[string]interface{}{"reviewed_by": operatorID}
 		if action == "modify" && newContent != "" {
 			fields["content"] = newContent
+			a.Content = newContent
 		}
 		_, err = s.repo.UpdateAlertStatus(alertID, model.AlertPendingReview, model.AlertTriggered, fields)
 		if err != nil {
@@ -129,11 +131,28 @@ func (s *AlertService) Review(alertID, operatorID int64, action, newContent stri
 		_ = s.repo.InsertAlertLog(&model.AlertLog{AlertID: alertID, FromStatus: model.AlertPendingReview,
 			ToStatus: model.AlertTriggered, OperatorID: operatorID, Remark: "复核通过发布"})
 		a.Status = model.AlertTriggered
+		// 复核通过时异步合成 TTS（原待审阶段未合成）
+		s.queue.Submit(func() { s.synthesizeAndSave(a.ID, a.Content) })
 		s.Dispatch(a)
 		return nil
 	default:
 		return fmt.Errorf("未知复核动作: %s", action)
 	}
+}
+
+// synthesizeAndSave 异步合成 TTS 并将 ObjectKey 回写到 alerts.tts_url。
+// 供 pending_review → triggered 流转时补充语音，不阻塞复核操作。
+func (s *AlertService) synthesizeAndSave(alertID int64, content string) {
+	key, err := s.tts.Synthesize(context.Background(), content)
+	if err != nil {
+		log.Printf("[alert] 复核 TTS 合成失败 alertID=%d: %v", alertID, err)
+		return
+	}
+	if _, err := s.repo.UpdateAlertTTSURL(alertID, key); err != nil {
+		log.Printf("[alert] 复核 TTS 回写失败 alertID=%d: %v", alertID, err)
+		return
+	}
+	log.Printf("[alert] 复核 TTS 合成完成 alertID=%d key=%s", alertID, key)
 }
 
 func (s *AlertService) renderContent(r model.Rule, rd *model.Reading, dev *model.Device) string {
