@@ -92,12 +92,17 @@ func main() {
 }
 
 func buildTTS(cfg *config.Config, storage provider.Storage) provider.TTSEngine {
-	if cfg.TTS.Provider == "edge" {
+	switch cfg.TTS.Provider {
+	case "http":
+		log.Printf("[tts] 使用自建 HTTP TTS 服务，endpoint=%s voice=%s", cfg.TTS.Endpoint, cfg.TTS.Voice)
+		return provider.NewHTTPTTS(storage, cfg.TTS.Endpoint, cfg.TTS.Voice, cfg.TTS.Speed)
+	case "edge":
 		log.Printf("[tts] 使用 edge-tts，voice=%s", cfg.TTS.Voice)
 		return provider.NewEdgeTTS(storage, cfg.TTS.Voice, cfg.TTS.PythonBin)
+	default:
+		log.Println("[tts] 使用 mock TTS（本地联调）")
+		return provider.MockTTS{}
 	}
-	log.Println("[tts] 使用 mock TTS（本地联调）")
-	return provider.MockTTS{}
 }
 
 func buildStorage(cfg *config.Config) provider.Storage {
