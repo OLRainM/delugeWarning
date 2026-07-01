@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"delugewarning/internal/middleware"
@@ -62,12 +63,11 @@ func (h *Handler) broadcast(c *gin.Context) {
 	}
 	ttsURL := ""
 	ttsReady := false
-	if a.TTSURL != "" {
+	// 仅对合法的 COS ObjectKey（audio/ 前缀）签名；过滤 mock/历史脏数据
+	if strings.HasPrefix(a.TTSURL, "audio/") {
 		signed, signErr := h.storage.GetDownloadURL(c, a.TTSURL, 15*time.Minute)
 		if signErr != nil {
 			log.Printf("[broadcast] 签名 TTS URL 失败: %v", signErr)
-			// COS 未就绪时透传 ObjectKey，让前端知道有内容但暂不可播放
-			ttsURL = a.TTSURL
 		} else {
 			ttsURL = signed
 			ttsReady = true
